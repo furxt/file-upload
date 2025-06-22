@@ -1,0 +1,8 @@
+server:
+  port: 8099
+
+spring:
+  servlet:
+    multipart:
+      enabled: true         # 开启文件上传功能
+      max-file-size: 20MB
