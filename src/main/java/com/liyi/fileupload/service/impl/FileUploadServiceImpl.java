@@ -82,13 +82,11 @@ public class FileUploadServiceImpl implements FileUploadService {
     }
 
     @Override
-    public void check(String fileId, String fileMD5) throws IOException {
+    public void check(String fileId, String fileMD5) {
         File file = Paths.get(localStorageDir, fileId, fileId).toFile();
-        try (InputStream is = FileUtil.getInputStream(file)) {
-            String md5 = SecureUtil.md5(is);
-            if (!CharSequenceUtil.equals(md5, fileMD5)) {
-                throw new RuntimeException("非法文件, md5值不一致!");
-            }
+        String md5 = SecureUtil.md5(file);
+        if (!CharSequenceUtil.equals(md5, fileMD5)) {
+            throw new RuntimeException("非法文件, md5值不一致!");
         }
     }
 }
