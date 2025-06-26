@@ -1,10 +1,9 @@
-package com.liyi.fileupload.controller;
+package com.liyi.fileupload.core.controller;
 
+import com.liyi.fileupload.core.service.FileUploadService;
 
-import com.liyi.fileupload.Constant;
-import com.liyi.fileupload.service.FileUploadService;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -16,19 +15,25 @@ import java.util.Map;
  * @author liyi
  * @date 2025-06-14
  */
-@Slf4j
 @RestController
-@RequestMapping(Constant.UPLOAD_PREFIX + "/upload")
+@RequestMapping("${ly.file-upload.url-prefix:ly}/upload")
 public class FileUploadController {
-    @Autowired
-    private FileUploadService fileUploadService;
+    private static final Logger log = LoggerFactory.getLogger(FileUploadController.class);
+
+    private final FileUploadService fileUploadService;
+
+    public FileUploadController(FileUploadService fileUploadService) {
+        this.fileUploadService = fileUploadService;
+    }
 
     @PostMapping("/chunk/{fileId}")
-    public Map<String, Object> upload(@RequestPart("file") MultipartFile file,
-                                      @PathVariable String fileId,
-                                      String chunkMD5,
-                                      Integer chunkIndex, Integer totalChunks) throws IOException {
-        log.info("fileId: {}, chunkIndex:{}, chunkMD5:{}, totalChunks:{}", fileId, chunkIndex, chunkMD5, totalChunks);
+    public Map<String, Object> upload(
+            @RequestPart("file") MultipartFile file,
+            @PathVariable String fileId,
+            String chunkMD5,
+            Integer chunkIndex,
+            Integer totalChunks)
+            throws IOException {
         fileUploadService.saveChunk(file, fileId, chunkMD5, chunkIndex, totalChunks);
         Map<String, Object> result = new HashMap<>(2);
         result.put("code", 1);
@@ -37,8 +42,8 @@ public class FileUploadController {
     }
 
     @GetMapping("/merge/{fileId}")
-    public Map<String, Object> merge(@PathVariable String fileId, Integer totalChunks) throws IOException {
-        log.info("fileId: {}, totalChunks: {}", fileId, totalChunks);
+    public Map<String, Object> merge(@PathVariable String fileId, Integer totalChunks)
+            throws IOException {
         fileUploadService.mergeChunks(fileId, totalChunks);
         Map<String, Object> result = new HashMap<>(2);
         result.put("code", 1);
@@ -47,9 +52,8 @@ public class FileUploadController {
     }
 
     @GetMapping("/check/{fileId}")
-    public Map<String, Object> check(@PathVariable String fileId,
-                                     String fileMD5) throws IOException {
-        log.info("fileId: {}, fileMD5: {}", fileId, fileMD5);
+    public Map<String, Object> check(@PathVariable String fileId, String fileMD5)
+            throws IOException {
         fileUploadService.check(fileId, fileMD5);
         Map<String, Object> result = new HashMap<>(2);
         result.put("code", 1);

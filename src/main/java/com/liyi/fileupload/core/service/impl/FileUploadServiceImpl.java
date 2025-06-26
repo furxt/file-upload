@@ -1,13 +1,15 @@
-package com.liyi.fileupload.service.impl;
-
+package com.liyi.fileupload.core.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.text.CharSequenceUtil;
 import cn.hutool.crypto.SecureUtil;
-import com.liyi.fileupload.service.FileUploadService;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
+
+import com.liyi.fileupload.core.service.FileUploadCompletedCallback;
+import com.liyi.fileupload.core.service.FileUploadService;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
@@ -21,14 +23,24 @@ import java.util.List;
  * @author liyi
  * @date 2025-06-22
  */
-@Slf4j
-@Service
 public class FileUploadServiceImpl implements FileUploadService {
+    private static final Logger log = LoggerFactory.getLogger(FileUploadServiceImpl.class);
+    private final String localStoragePath;
+    private final FileUploadCompletedCallback callback;
 
-    private final String localStorageDir = "D:/temp";
+    public FileUploadServiceImpl(String localStoragePath, FileUploadCompletedCallback callback) {
+        this.localStoragePath = localStoragePath;
+        this.callback = callback;
+    }
 
     @Override
-    public void saveChunk(MultipartFile file, String fileId, String chunkMD5, Integer chunkIndex, Integer totalChunks) throws IOException {
+    public void saveChunk(
+            MultipartFile file,
+            String fileId,
+            String chunkMD5,
+            Integer chunkIndex,
+            Integer totalChunks)
+            throws IOException {
         byte[] bytes = file.getBytes();
         String md5;
         try (InputStream is = new ByteArrayInputStream(bytes)) {
@@ -42,20 +54,24 @@ public class FileUploadServiceImpl implements FileUploadService {
         if (!CharSequenceUtil.equals(md5, chunkMD5)) {
             throw new RuntimeException("非法分片文件, md5值不一致!");
         }
-        FileUtil.writeBytes(bytes, Paths.get(localStorageDir, fileId, chunkIndex + "").toAbsolutePath().toFile());
+        FileUtil.writeBytes(
+                bytes,
+                Paths.get(localStoragePath, fileId, chunkIndex + "").toAbsolutePath().toFile());
     }
 
     @Override
     public void mergeChunks(String fileId, Integer totalChunks) {
         boolean flag = false;
-        String fileDirPath = Paths.get(localStorageDir, fileId).toFile().getAbsolutePath();
+        String fileDirPath = Paths.get(localStoragePath, fileId).toFile().getAbsolutePath();
         File tempFile = FileUtil.createTempFile();
         File destFile = Paths.get(fileDirPath, fileId).toAbsolutePath().toFile();
         List<String> filenames = FileUtil.listFileNames(fileDirPath);
         try {
             if (filenames.size() != totalChunks) {
-                String errMsg = String.format("总分片数对不上, 当前需要 %d 个分片, 但目前 %s 文件夹下有 %d 个分片", totalChunks, fileDirPath,
-                        filenames.size());
+                String errMsg =
+                        String.format(
+                                "总分片数对不上, 当前需要 %d 个分片, 但目前 %s 文件夹下有 %d 个分片",
+                                totalChunks, fileDirPath, filenames.size());
                 throw new RuntimeException(errMsg);
             }
             if (CollUtil.isNotEmpty(filenames)) {
@@ -75,6 +91,7 @@ public class FileUploadServiceImpl implements FileUploadService {
             FileUtil.del(fileDirPath);
             if (flag) {
                 FileUtil.moveContent(tempFile, destFile, true);
+                log.info("文件保存于: {}", destFile.getAbsolutePath());
             } else {
                 FileUtil.del(tempFile);
             }
@@ -83,10 +100,11 @@ public class FileUploadServiceImpl implements FileUploadService {
 
     @Override
     public void check(String fileId, String fileMD5) {
-        File file = Paths.get(localStorageDir, fileId, fileId).toFile();
+        File file = Paths.get(localStoragePath, fileId, fileId).toFile();
         String md5 = SecureUtil.md5(file);
         if (!CharSequenceUtil.equals(md5, fileMD5)) {
             throw new RuntimeException("非法文件, md5值不一致!");
         }
+        callback.onComplete(file.getAbsolutePath(), md5);
     }
 }
