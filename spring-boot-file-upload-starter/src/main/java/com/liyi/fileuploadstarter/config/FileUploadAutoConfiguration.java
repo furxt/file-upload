@@ -1,9 +1,9 @@
-package com.liyi.fileupload.core.config;
+package com.liyi.fileuploadstarter.config;
 
-import com.liyi.fileupload.core.controller.FileUploadController;
-import com.liyi.fileupload.core.service.FileUploadCompletedCallback;
-import com.liyi.fileupload.core.service.FileUploadService;
-import com.liyi.fileupload.core.service.impl.FileUploadServiceImpl;
+import com.liyi.fileuploadstarter.controller.FileUploadController;
+import com.liyi.fileuploadstarter.service.FileUploadCompletedCallback;
+import com.liyi.fileuploadstarter.service.FileUploadService;
+import com.liyi.fileuploadstarter.service.impl.FileUploadServiceImpl;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;

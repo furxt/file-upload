@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-com.liyi.fileupload.core.config.FileUploadAutoConfiguration
+com.liyi.fileuploadstarter.config.FileUploadAutoConfiguration

@@ -1,12 +1,12 @@
-package com.liyi.fileupload.core.service.impl;
+package com.liyi.fileuploadstarter.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.text.CharSequenceUtil;
 import cn.hutool.crypto.SecureUtil;
 
-import com.liyi.fileupload.core.service.FileUploadCompletedCallback;
-import com.liyi.fileupload.core.service.FileUploadService;
+import com.liyi.fileuploadstarter.service.FileUploadCompletedCallback;
+import com.liyi.fileuploadstarter.service.FileUploadService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

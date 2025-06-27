@@ -1,4 +1,4 @@
-package com.liyi.fileupload.core.service;
+package com.liyi.fileuploadstarter.service;
 
 import org.springframework.web.multipart.MultipartFile;
 

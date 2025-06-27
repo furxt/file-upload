@@ -1,4 +1,4 @@
-package com.liyi.fileupload.core.service;
+package com.liyi.fileuploadstarter.service;
 
 /**
  * @author liyi

@@ -1,6 +1,6 @@
-package com.liyi.fileupload.core.controller;
+package com.liyi.fileuploadstarter.controller;
 
-import com.liyi.fileupload.core.service.FileUploadService;
+import com.liyi.fileuploadstarter.service.FileUploadService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -1,4 +1,4 @@
-package com.liyi.fileupload.core.config;
+package com.liyi.fileuploadstarter.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
