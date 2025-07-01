@@ -4,7 +4,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
  * @author liyi
- * @date 2025-06-25
  */
 @ConfigurationProperties(prefix = "ly.file-upload")
 public class FileUploadProperties {

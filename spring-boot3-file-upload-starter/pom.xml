@@ -4,15 +4,13 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.liyi</groupId>
     <artifactId>spring-boot3-file-upload-starter</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
-    <name>spring-boot3-file-upload-starter</name>
-    <description>spring-boot3-file-upload-starter</description>
+    <version>1.0.0</version>
     <properties>
         <java.version>17</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <spring-boot.version>3.0.2</spring-boot.version>
-        <hutool.version>5.8.37</hutool.version>
+        <spring-boot.version>3.3.3</spring-boot.version>
+        <hutool.version>5.8.38</hutool.version>
     </properties>
     <dependencies>
         <dependency>

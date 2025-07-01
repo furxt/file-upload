@@ -62,7 +62,8 @@ public class FileUploadServiceImpl implements FileUploadService {
     @Override
     public void mergeChunks(String fileId, Integer totalChunks) {
         boolean flag = false;
-        String fileDirPath = Paths.get(localStoragePath, fileId).toFile().getAbsolutePath();
+        String fileDirPath =
+                Paths.get(localStoragePath, fileId).toAbsolutePath().toFile().getAbsolutePath();
         File tempFile = FileUtil.createTempFile();
         File destFile = Paths.get(fileDirPath, fileId).toAbsolutePath().toFile();
         List<String> filenames = FileUtil.listFileNames(fileDirPath);
@@ -80,7 +81,7 @@ public class FileUploadServiceImpl implements FileUploadService {
 
                 // 创建目标文件输出流
                 for (String filename : filenames) {
-                    File file = Paths.get(fileDirPath, filename).toFile();
+                    File file = Paths.get(fileDirPath, filename).toAbsolutePath().toFile();
                     // 将每个分片追加到目标文件末尾
                     byte[] bytes = FileUtil.readBytes(file);
                     FileUtil.writeBytes(bytes, tempFile, 0, bytes.length, true);
@@ -100,7 +101,7 @@ public class FileUploadServiceImpl implements FileUploadService {
 
     @Override
     public void check(String fileId, String fileMD5) {
-        File file = Paths.get(localStoragePath, fileId, fileId).toFile();
+        File file = Paths.get(localStoragePath, fileId, fileId).toAbsolutePath().toFile();
         String md5 = SecureUtil.md5(file);
         if (!CharSequenceUtil.equals(md5, fileMD5)) {
             throw new RuntimeException("非法文件, md5值不一致!");
