@@ -12,7 +12,6 @@ import java.util.Map;
 
 /**
  * @author liyi
- * @date 2025-06-14
  */
 @RestController
 @RequestMapping("${ly.file-upload.url-prefix:ly}/upload")
@@ -67,7 +66,7 @@ public class FileUploadController {
         return result;
     }
 
-    record SaveChunkRequest(
+    public record SaveChunkRequest(
             String chunkMD5,
             Integer chunkIndex,
             Integer totalChunks
