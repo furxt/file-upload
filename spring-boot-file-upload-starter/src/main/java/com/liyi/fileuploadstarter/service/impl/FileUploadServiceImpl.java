@@ -5,8 +5,11 @@ import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.text.CharSequenceUtil;
 import cn.hutool.crypto.SecureUtil;
 
+import com.liyi.fileuploadstarter.entity.AesGcm;
+import com.liyi.fileuploadstarter.service.FileUploadCacheService;
 import com.liyi.fileuploadstarter.service.FileUploadCompletedCallback;
 import com.liyi.fileuploadstarter.service.FileUploadService;
+import com.liyi.fileuploadstarter.util.AesGcmUtils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,23 +17,26 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Paths;
 import java.util.List;
 
 /**
  * @author liyi
- * @date 2025-06-22
  */
 public class FileUploadServiceImpl implements FileUploadService {
     private static final Logger log = LoggerFactory.getLogger(FileUploadServiceImpl.class);
     private final String localStoragePath;
     private final FileUploadCompletedCallback callback;
+    private final FileUploadCacheService fileUploadCacheService;
 
-    public FileUploadServiceImpl(String localStoragePath, FileUploadCompletedCallback callback) {
+    public FileUploadServiceImpl(
+            String localStoragePath,
+            FileUploadCompletedCallback callback,
+            FileUploadCacheService fileUploadCacheService) {
         this.localStoragePath = localStoragePath;
         this.callback = callback;
+        this.fileUploadCacheService = fileUploadCacheService;
     }
 
     @Override
@@ -40,13 +46,27 @@ public class FileUploadServiceImpl implements FileUploadService {
             String chunkMD5,
             Integer chunkIndex,
             Integer totalChunks)
-            throws IOException {
+            throws Exception {
         byte[] bytes = file.getBytes();
+        // 1.获取AES密钥和IV
+        AesGcm aesGcm = fileUploadCacheService.get(fileId);
+        byte[] aesKeyBytes = aesGcm.getAesKeyBytes();
+        byte[] ivBytes = aesGcm.getIvBytes();
+
+        if (aesKeyBytes == null || ivBytes == null) {
+            throw new IllegalArgumentException("AES key or IV not found for fileId: " + fileId);
+        }
+
+        // 2.解密
+        byte[] decryptedBytes = AesGcmUtils.decrypt(bytes, aesKeyBytes, ivBytes);
+
+        // 3.md5校验
         String md5;
-        try (InputStream is = new ByteArrayInputStream(bytes)) {
-            // 先将整个流读入内存
+        try (InputStream is = new ByteArrayInputStream(decryptedBytes)) {
             md5 = SecureUtil.md5(is);
         }
+
+        // 4.合规性校验
         if (chunkIndex >= totalChunks) {
             String errMsg = String.format("非法的分片序号: %d, 总分片数: %d", chunkIndex, totalChunks);
             throw new RuntimeException(errMsg);
@@ -54,8 +74,10 @@ public class FileUploadServiceImpl implements FileUploadService {
         if (!CharSequenceUtil.equals(md5, chunkMD5)) {
             throw new RuntimeException("非法分片文件, md5值不一致!");
         }
+
+        // 5.保存分片文件
         FileUtil.writeBytes(
-                bytes,
+                decryptedBytes,
                 Paths.get(localStoragePath, fileId, chunkIndex + "").toAbsolutePath().toFile());
     }
 

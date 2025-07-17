@@ -17,7 +17,7 @@ public interface FileUploadService {
      * @param chunkMD5 分片MD5
      * @param chunkIndex 当前分片下标
      * @param totalChunks 分片总数
-     * @throws IOException IO异常
+     * @throws Exception IO异常
      */
     void saveChunk(
             MultipartFile file,
@@ -25,7 +25,7 @@ public interface FileUploadService {
             String chunkMD5,
             Integer chunkIndex,
             Integer totalChunks)
-            throws IOException;
+            throws Exception;
 
     /**
      * 合并分片

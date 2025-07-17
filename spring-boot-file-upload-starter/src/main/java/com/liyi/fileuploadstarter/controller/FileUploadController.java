@@ -13,7 +13,6 @@ import java.util.Map;
 
 /**
  * @author liyi
- * @date 2025-06-14
  */
 @RestController
 @RequestMapping("${ly.file-upload.url-prefix:ly}/upload")
@@ -33,7 +32,7 @@ public class FileUploadController {
             String chunkMD5,
             Integer chunkIndex,
             Integer totalChunks)
-            throws IOException {
+            throws Exception {
         fileUploadService.saveChunk(file, fileId, chunkMD5, chunkIndex, totalChunks);
         Map<String, Object> result = new HashMap<>();
         result.put("code", 1);
