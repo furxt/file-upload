@@ -30,15 +30,6 @@ public class DefaultKeyServiceImpl implements KeyService {
         }
     }
 
-    private String pemToBase64(String pemKey) {
-        return pemKey.replace("-----BEGIN PUBLIC KEY-----", "")
-                .replace("-----END PUBLIC KEY-----", "")
-                .replace("-----BEGIN PRIVATE KEY-----", "")
-                .replace("-----END PRIVATE KEY-----", "")
-                // 去除所有空白字符（包括换行、空格等）
-                .replaceAll("\\s", "");
-    }
-
     @Override
     public String getPemPublicKey() {
         return pemPublicKey;

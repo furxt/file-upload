@@ -111,6 +111,7 @@ public class FileUploadServiceImpl implements FileUploadService {
                 flag = true;
             }
         } finally {
+            fileUploadCacheService.remove(fileId);
             FileUtil.del(fileDirPath);
             if (flag) {
                 FileUtil.moveContent(tempFile, destFile, true);

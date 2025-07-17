@@ -21,4 +21,11 @@ public interface FileUploadCacheService {
      * @return AesGcm
      */
     AesGcm get(String key);
+
+    /**
+     * 删除AesGcm
+     *
+     * @param key 键值
+     */
+    void remove(String key);
 }

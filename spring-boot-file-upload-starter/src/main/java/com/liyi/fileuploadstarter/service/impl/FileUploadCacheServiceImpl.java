@@ -29,4 +29,9 @@ public class FileUploadCacheServiceImpl implements FileUploadCacheService {
     public AesGcm get(String key) {
         return CACHE.getIfPresent(key);
     }
+
+    @Override
+    public void remove(String key) {
+        CACHE.invalidate(key);
+    }
 }
