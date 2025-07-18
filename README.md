@@ -12,6 +12,8 @@ ly:
     enabled: true # 是否启用，默认false不启用；如果要启用，请设置为true
     local-storage-path: /xxx/xxx # 本地存储路径
     url-prefix: xxx # 接口路径的前缀，防止与项目其他接口路径地址冲突
+    private-key-path: classpath:private-key.pem # rsa密钥路径
+    public-key-path: classpath:public-key.pem # rsa公钥路径
 ```
 
 具体的接口文档待后续完善...

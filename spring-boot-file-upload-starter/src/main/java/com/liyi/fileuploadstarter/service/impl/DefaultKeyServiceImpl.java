@@ -28,7 +28,7 @@ public class DefaultKeyServiceImpl implements KeyService {
                         pemToBase64(this.pemPublicKey));
     }
 
-    String pemToBase64(String pemKey) {
+    private String pemToBase64(String pemKey) {
         return pemKey.replace("-----BEGIN PRIVATE KEY-----", "")
                 .replace("-----END PRIVATE KEY-----", "")
                 .replace("-----BEGIN PUBLIC KEY-----", "")
