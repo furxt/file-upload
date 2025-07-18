@@ -39,7 +39,7 @@ public class KeyController {
     }
 
     @PostMapping("store")
-    public Map<String, Object> storeAesKey(@RequestBody ReqStoreKey req) throws Exception {
+    public Map<String, Object> storeAesKey(@RequestBody ReqStoreKey req) {
         // 1. 解码 Base64
         byte[] encryptedAesKeyBytes = Base64.getDecoder().decode(req.getEncryptedAesKey());
         byte[] ivBytes = Base64.getDecoder().decode(req.getIv());

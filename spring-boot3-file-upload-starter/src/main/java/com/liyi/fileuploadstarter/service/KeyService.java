@@ -16,7 +16,6 @@ public interface KeyService {
      *
      * @param data 密文
      * @return 明文
-     * @throws Exception 解密异常
      */
-    byte[] decrypt(byte[] data) throws Exception;
+    byte[] decrypt(byte[] data);
 }
